@@ -1,7 +1,10 @@
-//import java.io.*;
+import java.io.*;
 import java.util.*;
+import java.lang.String;
+
 class Main_menu{
 
+    private static String unique_ID;
     public static String generate_unique_ID(){
         Random uid = new Random();
         int unique_ID = uid.nextInt(999999);
@@ -11,10 +14,9 @@ class Main_menu{
     public static void main(String[]args){
 
         ArrayList<vaccines> vaccines_list = new ArrayList<vaccines>();
-        ArrayList<citizens> registered_citizens__list = new ArrayList<citizens>();
+        ArrayList<citizens> registered_citizens_list = new ArrayList<citizens>();
         ArrayList<slots> slots_list = new ArrayList<slots>();
-        HashMap<String, String> hospitals_uid_record = new HashMap<String, String>();
-        HashMap<String, Integer> hospitals_pincode_record = new HashMap<String, Integer>();
+        ArrayList<hospitals> hospitals_record = new ArrayList<hospitals>();
 
         System.out.println("CoWin Portal initialised....");
         System.out.println("--------------------------------------\n1. Add Vaccine\n2. Register Hospital\n3. Register Citizen\n4. Add Slot for Vaccination\n5. Book Slot for Vaccination\n6. List all slots for a hospital\n7. Check Vaccination Status\n8. Exit");
@@ -59,16 +61,23 @@ class Main_menu{
                 new_hospital.set_name(name);
                 new_hospital.set_pin_code(pin_code);
 
-                hospitals_pincode_record.put(new_hospital.get_name(), new_hospital.get_pin_code());
+                hospitals_record.add(new_hospital);
 
-                String unique_ID = generate_unique_ID();
-                Collection<String> values = hospitals_uid_record.values();
-                List<String> hospital_IDs = new ArrayList<String>(values);
+                for(int n=0; n<hospitals_record.size(); n++)
+
+                unique_ID = (String)generate_unique_ID();
+                HashSet<String> hospital_IDs = new HashSet<String>();
+
+                for(int n=0; n<hospitals_record.size(); n++){
+                    hospital_IDs.add(hospitals_record.get(n).get_unique_ID());
+                }
 
                 if(!hospital_IDs.contains(unique_ID)){
-                    new_hospital.register_hospitals(unique_ID);
-                    hospitals_uid_record.put(new_hospital.get_name(), unique_ID);
-                    }
+                    new_hospital.set_unique_ID(unique_ID);
+                    new_hospital.register_hospitals();
+                    hospitals_record.add(new_hospital);
+                }
+
                 System.out.println("\n--------------------------------------");
             }
 
@@ -79,17 +88,17 @@ class Main_menu{
                 int age = cowin.nextInt();
                 cowin.nextLine();
                 System.out.print("Unique ID: ");
-                String unique_ID = cowin.nextLine();
+                String citizen_unique_ID = cowin.nextLine();
 
                 citizens new_citizen = new citizens();
                 new_citizen.set_name(name);
                 new_citizen.set_age(age);
-                new_citizen.set_unique_ID(unique_ID);
+                new_citizen.set_unique_ID(citizen_unique_ID);
 
                 new_citizen.register_citizens();
 
                 if(new_citizen.get_age() >= 18){
-                    registered_citizens__list.add(new_citizen);
+                    registered_citizens_list.add(new_citizen);
                 }
                 System.out.println("\n--------------------------------------");
             }
@@ -124,7 +133,6 @@ class Main_menu{
 
                     System.out.print("Slot added by Hospital "+hospital_ID);
                     System.out.print(" for Day: "+day_number+", Available Quantity: "+quantity+" of Vaccine "+vaccines_list.get(vaccine_index).get_name());
-
                 }
                 System.out.println("\n--------------------------------------");
             }
@@ -138,59 +146,81 @@ class Main_menu{
                 System.out.print("Enter option: ");
                 int search_option = cowin.nextInt();
 
-                ArrayList<String> new_hospital_uid = new ArrayList<String>();
-                HashMap<String, Integer> choose_slot = new HashMap<String, Integer>();
+                HashSet<String> new_hospital_uid = new HashSet<String>();
+                HashMap<Integer, String> choose_slot = new HashMap<Integer, String>();
 
                 if(search_option == 1){
                     System.out.print("Enter PinCode: ");
                     int pin_code = cowin.nextInt();
                     cowin.nextLine();
 
-                    for(int n : hospitals_pincode_record.values()){
-                        if(pin_code == n){
-                            System.out.println(hospitals_uid_record.get(getKey(hospitals_pincode_record, n)+" "+getKey(hospitals_pincode_record, n)));
-                            new_hospital_uid.add(hospitals_uid_record.get(getKey(hospitals_pincode_record, n)));
+                    for(int n=0; n<hospitals_record.size(); n++){
+                        if(pin_code == hospitals_record.get(n).get_pin_code() & !new_hospital_uid.contains(hospitals_record.get(n).get_unique_ID())){
+                            System.out.println(hospitals_record.get(n).get_unique_ID()+" "+hospitals_record.get(n).get_name());
+                            new_hospital_uid.add(hospitals_record.get(n).get_unique_ID());
                         }
                     }
-                    
-
+                    System.out.print("Enter hospital id: ");
+                    String hospital_id = cowin.nextLine();
+                    cowin.nextLine();
+    
+                    for(int n=0; n<slots_list.size(); n++){
+                        if(slots_list.get(n).get_hospital_ID().equals(hospital_id)){
+                            System.out.println(n+"->Day: "+slots_list.get(n).get_day_number()+", Available Qty: "+slots_list.get(n).get_quantity()+", Vaccine: "+slots_list.get(n).get_vaccine());
+                            choose_slot.put(n, slots_list.get(n).get_vaccine());
+    
+                        }
+                    }
+                    System.out.println("Choose Slot: ");
+                    int slot_choosing = cowin.nextInt();
+                    cowin.nextLine();
+    
+                    for(int n=0; n<registered_citizens_list.size(); n++){
+                        for(int p : choose_slot.keySet()){
+                            if(registered_citizens_list.get(n).get_unique_ID() == patient_unique_ID & slot_choosing == p ){
+                                System.out.println(registered_citizens_list.get(n).get_name()+" vaccinated with "+choose_slot.get(p));
+                            }
+                        }
+                    } 
                 }
-                if(search_option == 2){
+
+                else if(search_option == 2){
                     System.out.print("Enter Vaccine name: ");
                     String vaccine_name = cowin.nextLine();
                     cowin.nextLine();
 
-                    for(slots n : slots_list){
-                        if(n.get_vaccine() == vaccine_name){
-                            System.out.println(n.get_hospital_ID()+" "+getKey(hospitals_uid_record, n.get_hospital_ID()));
-                            new_hospital_uid.add(n.get_hospital_ID());
+                    for(int n=0; n<slots_list.size(); n++){
+                        for(int p=0; p<hospitals_record.size(); p++){
+                            if(slots_list.get(n).get_vaccine().equals(vaccine_name) & slots_list.get(n).get_hospital_ID() == hospitals_record.get(p).get_unique_ID()){
+                                System.out.println(slots_list.get(n).get_hospital_ID()+" "+hospitals_record.get(p).get_name());
+                                new_hospital_uid.add(slots_list.get(n).get_hospital_ID());
+                            }
+                        }
+                    }
+                    System.out.print("Enter hospital id: ");
+                    String hospital_id = cowin.nextLine();
+                    cowin.nextLine();
+    
+                    for(int n=0; n<slots_list.size(); n++){
+                        if(slots_list.get(n).get_hospital_ID() == hospital_id){
+                            System.out.print(n+"->Day: "+slots_list.get(n).get_day_number()+", Available Qty: "+slots_list.get(n).get_quantity()+", Vaccine: "+slots_list.get(n).get_vaccine());
+                            choose_slot.put(n, slots_list.get(n).get_vaccine());
+    
+                        }
+                    }
+                    System.out.println("Choose Slot: ");
+                    int slot_choosing = cowin.nextInt();
+    
+                    for(int n=0; n<registered_citizens_list.size(); n++){
+                        for(int p : choose_slot.keySet()){
+                            if(registered_citizens_list.get(n).get_unique_ID() == patient_unique_ID & slot_choosing == p ){
+                                System.out.println(registered_citizens_list.get(n).get_name()+" vaccinated with "+choose_slot.get(p));
+                            }
                         }
                     }
                 }
 
-                System.out.print("Enter hospital id: ");
-                String hospital_id = cowin.nextLine();
-                int p=0;
-                for(slots n : slots_list){
-                    if(n.get_hospital_ID() == hospital_id){
-                        System.out.print(p+"->Day: "+n.get_day_number()+", Available Qty: "+n.get_quantity()+", Vaccine: "+n.get_vaccine());
-                        choose_slot.put(n.get_vaccine(), p);
-
-                    }
-                    p++;
-                }
-                System.out.print("Choose Slot: ");
-                int slot_choosing = cowin.nextInt();
-
-                for(citizens n : registered_citizens__list){
-                    if(n.get_unique_ID() == patient_unique_ID & p==0){
-                        System.out.println(n.get_name()+" vaccinated with "+getKey(choose_slot, slot_choosing));
-                    }
-                    else if(p!=0){
-                        System.out.println("No slots available");
-                    }
-                }
-                if(search_option == 3){
+                else{
                     break;
                 }
                 System.out.println("\n--------------------------------------");
@@ -208,6 +238,11 @@ class Main_menu{
                 }
                 System.out.println("\n--------------------------------------");
             }
+
+            else if(option == 7){
+                System.out.print("Enter Patient ID: ");
+                String patient_ID = cowin.nextLine();
+            }
             
             else if(option == 8){
                 System.out.println("Thank you for using CoWin by Neev");
@@ -216,13 +251,8 @@ class Main_menu{
             }
         }
     }
-    private static String getKey(HashMap<String, String> hospitals_uid_record, String get_hospital_ID) {
-        return null;
-    }
-    private static Object getKey(HashMap<String, Integer> hospitals_pincode_record, int n) {
-        return null;
-    }
 }
+
 class vaccines{
     private String name;
     private int no_of_doses;
@@ -289,10 +319,11 @@ class citizens{
 class hospitals{
     private String name;
     private int pin_code;
+    private String unique_ID;
 
-    public void register_hospitals(String unique_ID){
-        System.out.print("Citizen Name: "+name);
-        System.out.print(", Age: "+pin_code);
+    public void register_hospitals(){
+        System.out.print("Hospital Name: "+name);
+        System.out.print(", PinCode: "+pin_code);
         System.out.print(", Unique ID: "+unique_ID);
     }
     public String get_name(){
@@ -307,6 +338,12 @@ class hospitals{
     public void set_pin_code(int pin_code){
         this.pin_code = pin_code;
     }
+    public String get_unique_ID(){
+        return unique_ID;
+    }
+    public void set_unique_ID(String unique_ID){
+        this.unique_ID = unique_ID;
+    }
 }
 class slots{
     private String hospital_ID;
@@ -317,8 +354,6 @@ class slots{
 
     public String get_hospital_ID(){
         return hospital_ID;
-    }
-    public static void add(slots new_slot) {
     }
     public void set_hospital_ID(String hospital_ID){
         this.hospital_ID = hospital_ID;
