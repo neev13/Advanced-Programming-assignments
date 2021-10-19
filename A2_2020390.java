@@ -1,13 +1,11 @@
 import java.util.*;
 import java.lang.String;
 import java.util.Calendar;
-import java.util.function.IntPredicate;
 
 class Main{
 
     public static void main(String[]args){
 
-        ArrayList<course_relations> courses_list = new ArrayList<course_relations>();
         ArrayList<String> instructors_list = new ArrayList<String>(); 
         ArrayList<students> students_list = new ArrayList<students>();
         ArrayList<lecture_slides> lecture_slide_list = new ArrayList<lecture_slides>();
@@ -223,7 +221,7 @@ class Main{
                         System.out.println("--------------------------------------");
                     }
                     else if(function_number==5){
-                        
+
                         HashMap<Integer, String> choosing_id = new HashMap<Integer, String>();
 
                         int k=0;
@@ -577,13 +575,13 @@ class Main{
                         Calendar calendar = Calendar.getInstance();
                         new_comment.set_date_of_upload(calendar.getTime());
                         new_comment.set_comment(comment);
-                        new_comment.set_student(students_list.get(student_id).get_student_name());
+                        new_comment.set_student_name(students_list.get(student_id).get_student_name());
 
                         list_of_comments.add(new_comment);
 
                     }
                     else if(function_number==7){
-                        System.out.println("Thanks for using Backpack "+students_list.get(student_id));
+                        System.out.println("Thanks for using Backpack "+students_list.get(student_id).get_student_name());
                         System.out.println("--------------------------------------");
                         break;
                     }
@@ -603,9 +601,34 @@ class Main{
     }
 }
 
-class course_relations{
+interface instructors_interface{
+    String instructor=null;
+    String get_instructor();
+    void set_instructor(String instructor);
+    // public String get_instructor(){
+    //     return instructor;
+    // }
+    // public void set_instructor(String instructor){
+    //     this.instructor = instructor;
+    // }
+    // public String get_student(){
+    //     return student;
+    // }
+    // public void set_student(String student){
+    //     this.student = student;
+    // }
+}
+interface students_interface{
+    String student_name=null;
+    String get_student_name();
+    void set_student_name(String student_name);
+}
+
+class lecture_videos implements instructors_interface{
     private String instructor;
-    private String student;
+    private String video_title;
+    private String video_file;
+    private Date date_of_upload;
 
     public String get_instructor(){
         return instructor;
@@ -613,18 +636,6 @@ class course_relations{
     public void set_instructor(String instructor){
         this.instructor = instructor;
     }
-    public String get_student(){
-        return student;
-    }
-    public void set_student(String student){
-        this.student = student;
-    }
-}
-class lecture_videos extends course_relations{
-    private String video_title;
-    private String video_file;
-    private Date date_of_upload;
-
     public String get_video_title(){
         return video_title;
     }
@@ -644,12 +655,19 @@ class lecture_videos extends course_relations{
         this.date_of_upload = date_of_upload;
     }
 }
-class lecture_slides extends course_relations{
+class lecture_slides implements instructors_interface{
+    private String instructor;
     private String slides_title;
     private int number_of_slides;
     private ArrayList<ArrayList<String>> slides_list = new ArrayList<ArrayList<String>>();
     private Date date_of_upload;
 
+    public String get_instructor(){
+        return instructor;
+    }
+    public void set_instructor(String instructor){
+        this.instructor = instructor;
+    }
     public String get_slides_title(){
         return slides_title;
     }
@@ -675,7 +693,9 @@ class lecture_slides extends course_relations{
         this.date_of_upload = date_of_upload;
     }
 }
-class backpack_comments extends course_relations{
+class backpack_comments implements students_interface, instructors_interface{
+    private String student_name;
+    private String instructor;
     private String comment;
     private Date date_of_upload;
 
@@ -686,10 +706,22 @@ class backpack_comments extends course_relations{
             System.out.println(this.date_of_upload);
         }
 
-        if(this.get_student()!=null){
-            System.out.println(this.comment+" - "+this.get_student());
+        if(this.get_student_name()!=null){
+            System.out.println(this.comment+" - "+this.get_student_name());
             System.out.println(this.date_of_upload);
         }
+    }
+    public String get_instructor(){
+        return instructor;
+    }
+    public void set_instructor(String instructor){
+        this.instructor = instructor;
+    }
+    public String get_student_name(){
+        return student_name;
+    }
+    public void set_student_name(String student_name){
+        this.student_name = student_name;
     }
     public String get_comment(){
         return comment;
@@ -704,7 +736,15 @@ class backpack_comments extends course_relations{
         this.date_of_upload = date_of_upload;
     }
 }
-class assignment{
+interface assignment_interface{
+    String problem_statement=null;
+    int assignment_max_marks=10;
+    String get_problem_statement();
+    void set_problem_statement(String problem_statement);
+    int get_assignment_max_marks();
+    void set_assignment_max_marks(int assignment_max_marks);
+}
+class assignment implements assignment_interface{
     private String problem_statement;
     private int assignment_max_marks;
 
@@ -721,9 +761,15 @@ class assignment{
         this.assignment_max_marks = assignment_max_marks;
     }
 }
-class quiz extends assignment{
+interface quiz_interface{
+    String quiz_question=null;
+    int quiz_max_marks=1;
+    String get_quiz_question();
+    void set_quiz_question(String quiz_question);
+    int get_quiz_max_marks();
+}
+class quiz implements quiz_interface{
     private String quiz_question;
-    private int quiz_max_marks=1;
 
     public String get_quiz_question(){
         return quiz_question;
@@ -735,8 +781,11 @@ class quiz extends assignment{
         return quiz_max_marks;
     }
 }
-class students extends quiz{
+class students implements students_interface, assignment_interface, quiz_interface{
     private String student_name;
+    private String problem_statement;
+    private int assignment_max_marks;
+    private String quiz_question;
     private ArrayList<assignment> pending_assignments_list = new ArrayList<assignment>();
     private ArrayList<assignment> submitted_assignments = new ArrayList<assignment>();
     private HashMap<assignment, String> submitted_assignments_list = new HashMap<assignment, String>();
@@ -753,6 +802,27 @@ class students extends quiz{
     }
     public void set_student_name(String student_name){
         this.student_name = student_name;
+    }
+    public String get_problem_statement(){
+        return problem_statement;
+    }
+    public void set_problem_statement(String problem_statement){
+        this.problem_statement = problem_statement;
+    }
+    public int get_assignment_max_marks(){
+        return assignment_max_marks;
+    }
+    public void set_assignment_max_marks(int assignment_max_marks){
+        this.assignment_max_marks = assignment_max_marks;
+    }
+    public String get_quiz_question(){
+        return quiz_question;
+    }
+    public void set_quiz_question(String quiz_question){
+        this.quiz_question = quiz_question;
+    }
+    public int get_quiz_max_marks(){
+        return quiz_max_marks;
     }
     public ArrayList<assignment> get_pending_assignments_list(){
         return pending_assignments_list;
