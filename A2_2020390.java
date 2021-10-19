@@ -13,7 +13,10 @@ class Main{
         ArrayList<lecture_slides> lecture_slide_list = new ArrayList<lecture_slides>();
         ArrayList<lecture_videos> lecture_video_list = new ArrayList<lecture_videos>();
         ArrayList<assignment> all_assignments_list = new ArrayList<assignment>();
+        ArrayList<assignment> closed_assignments_list = new ArrayList<assignment>();
         ArrayList<quiz> all_quizes_list = new ArrayList<quiz>();
+        ArrayList<quiz> closed_quizes_list = new ArrayList<quiz>();
+        ArrayList<backpack_comments> list_of_comments = new ArrayList<backpack_comments>();
 
         // System.out.println("Create some courses for Backpack first");
         // Scanner backpack = new Scanner(System.in);
@@ -211,24 +214,26 @@ class Main{
                         for(int m=0; m<all_assignments_list.size(); m++){
                             System.out.println("ID: "+k+" Assignment: "+all_assignments_list.get(m).get_problem_statement()+"   Max Marks: "+all_assignments_list.get(m).get_assignment_max_marks());
                             k++;
-                            System.out.println("-----------------");
                         }
+                        System.out.println("-----------------");
                         for(int m=0; m<all_quizes_list.size(); m++){
                             System.out.println("ID: "+k+" Question: "+all_quizes_list.get(m).get_quiz_question());
                             k++;
-                            System.out.println("-----------------");
                         }
                         System.out.println("--------------------------------------");
                     }
                     else if(function_number==5){
+                        
                         HashMap<Integer, String> choosing_id = new HashMap<Integer, String>();
+
                         int k=0;
                         for(int m=0; m<all_assignments_list.size(); m++){
                             System.out.println("ID: "+k+" Assignment: "+all_assignments_list.get(m).get_problem_statement()+"   Max Marks: "+all_assignments_list.get(m).get_assignment_max_marks());
                             choosing_id.put(k, all_assignments_list.get(m).get_problem_statement());
-                            k++;
+                            k++; 
                             System.out.println("-----------------");
                         }
+                        
                         for(int m=0; m<all_quizes_list.size(); m++){
                             System.out.println("ID: "+k+" Question: "+all_quizes_list.get(m).get_quiz_question());
                             choosing_id.put(k, all_quizes_list.get(m).get_quiz_question());
@@ -274,25 +279,30 @@ class Main{
                                 for(int m=0; m<students_list.get(p).get_submitted_assignments().size(); m++){
                                     if(students_list.get(p).get_submitted_assignments().get(m).get_problem_statement().equals(choosing_id.get(assessment_ID))){
                                         System.out.println(students_list.get(p).get_submitted_assignments_list().get(students_list.get(p).get_submitted_assignments().get(m)));
-                                        System.out.println("\n----------------------");
+
                                         System.out.println("Max Marks: "+students_list.get(p).get_submitted_assignments().get(m).get_assignment_max_marks());
                                         System.out.print("Max scored: ");
                                         int assignment_marks = backpack.nextInt();
+                                        backpack.nextLine();
                                         students_list.get(p).get_graded_assignments_list().put(students_list.get(p).get_submitted_assignments().get(m), assignment_marks);
+                                        students_list.get(p).get_instructors_grading_assignments().put(students_list.get(p).get_submitted_assignments().get(m), instructors_list.get(instructor_id));
                                     }
                                 }
                             }
                         }
+                        System.out.println("\n----------------------");
                         for(int p=0; p<students_list.size(); p++){
                             if(students_list.get(p).get_student_name().equals(choosing_student_id.get(student_id))){
                                 for(int m=0; m<students_list.get(p).get_submitted_quizes().size(); m++){
                                     if(students_list.get(p).get_submitted_quizes().get(m).get_quiz_question().equals(choosing_id.get(assessment_ID))){
                                         System.out.println(students_list.get(p).get_submitted_quizes_list().get(students_list.get(p).get_submitted_quizes().get(m)));
-                                        System.out.println("----------------------");
+
                                         System.out.println("Max Marks: "+students_list.get(p).get_submitted_quizes().get(m).get_quiz_max_marks());
                                         System.out.print("Max scored: ");
                                         int quiz_marks = backpack.nextInt();
+                                        backpack.nextLine();
                                         students_list.get(p).get_graded_quizes_list().put(students_list.get(p).get_submitted_quizes().get(m), quiz_marks);
+                                        students_list.get(p).get_instructors_grading_quizes().put(students_list.get(p).get_submitted_quizes().get(m), instructors_list.get(instructor_id));
                                     }
 
                                 }
@@ -302,7 +312,69 @@ class Main{
 
                     }
                     else if(function_number==6){
+                        HashMap<Integer, String> choosing_id = new HashMap<Integer, String>();
 
+                        System.out.println("List of Open Assignments:");
+                        int k=0;
+                        for(int m=0; m<all_assignments_list.size(); m++){
+                            if(!closed_assignments_list.contains(all_assignments_list.get(m))){
+                                System.out.println("ID: "+k+" Assignment: "+all_assignments_list.get(m).get_problem_statement()+"   Max Marks: "+all_assignments_list.get(m).get_assignment_max_marks());
+                                choosing_id.put(k, all_assignments_list.get(m).get_problem_statement());
+                                k++;
+                            }
+                        }
+                        System.out.println("-----------------");
+                        for(int m=0; m<all_quizes_list.size(); m++){
+                            if(!closed_quizes_list.contains(all_quizes_list.get(m))){
+                                System.out.println("ID: "+k+" Question: "+all_quizes_list.get(m).get_quiz_question());
+                                choosing_id.put(k, all_quizes_list.get(m).get_quiz_question());
+                                k++;
+                            }
+                        }
+                        System.out.print("Enter ID of assessment to close: ");
+                        int assessment_ID = backpack.nextInt();
+
+                        for(int m=0; m<all_assignments_list.size(); m++){
+                            if(all_assignments_list.get(m).get_problem_statement().equals(choosing_id.get(assessment_ID))){
+                                closed_assignments_list.add(all_assignments_list.get(m));
+                            }
+                        }
+                        for(int m=0; m<all_quizes_list.size(); m++){
+                            if(all_quizes_list.get(m).get_quiz_question().equals(choosing_id.get(assessment_ID))){
+                                closed_quizes_list.add(all_quizes_list.get(m));
+                            }
+                        }
+                        System.out.println("--------------------------------------");
+                    }
+                    else if(function_number==7){
+                        for(int m=0; m<list_of_comments.size(); m++){
+                            // if(list_of_comments.get(m).get_instructor() != null){
+                            //     System.out.println(list_of_comments.get(m).get_comment()+" - "+list_of_comments.get(m).get_instructor());
+                            //     System.out.println(list_of_comments.get(m).get_date_of_upload());
+                            // }
+                            // else if(list_of_comments.get(m).get_student() != null){
+                            //     System.out.println(list_of_comments.get(m).get_comment()+" - "+list_of_comments.get(m).get_student());
+                            //     System.out.println(list_of_comments.get(m).get_date_of_upload());
+                            // }
+                            list_of_comments.get(m).view_comment();
+                            System.out.println("");
+
+                        }
+                        System.out.println("--------------------------------------");
+                    }
+                    else if(function_number==8){
+                        System.out.print("Enter comment: ");
+                        String comment = backpack.nextLine();
+
+                        backpack_comments new_comment = new backpack_comments();
+                        Calendar calendar = Calendar.getInstance();
+                        new_comment.set_date_of_upload(calendar.getTime());
+                        new_comment.set_comment(comment);
+                        new_comment.set_instructor(instructors_list.get(instructor_id));
+
+                        list_of_comments.add(new_comment);
+
+                        System.out.println("--------------------------------------");
                     }
                     else if(function_number==9){
                         System.out.println("Thanks for using Backpack "+instructors_list.get(instructor_id));
@@ -402,14 +474,18 @@ class Main{
                         }
                         else{
                             for(int m=0; m<students_list.get(student_id).get_pending_assignments_list().size(); m++){
-                                System.out.println("ID: "+k+" Assignment: "+students_list.get(student_id).get_pending_assignments_list().get(m).get_problem_statement()+"   Max Marks: "+students_list.get(student_id).get_pending_assignments_list().get(m).get_assignment_max_marks());
-                                choosing_id.put(k, students_list.get(student_id).get_pending_assignments_list().get(m).get_problem_statement());
-                                k++;
+                                if(!closed_assignments_list.contains(students_list.get(student_id).get_pending_assignments_list().get(m))){
+                                    System.out.println("ID: "+k+" Assignment: "+students_list.get(student_id).get_pending_assignments_list().get(m).get_problem_statement()+"   Max Marks: "+students_list.get(student_id).get_pending_assignments_list().get(m).get_assignment_max_marks());
+                                    choosing_id.put(k, students_list.get(student_id).get_pending_assignments_list().get(m).get_problem_statement());
+                                    k++;
+                                }
                             }
                             for(int m=0; m<students_list.get(student_id).get_pending_quizes_list().size(); m++){
-                                System.out.println("ID: "+k+" Question: "+students_list.get(student_id).get_pending_quizes_list().get(m).get_quiz_question());
-                                choosing_id.put(k, students_list.get(student_id).get_pending_quizes_list().get(m).get_quiz_question());
-                                k++;
+                                if(!closed_quizes_list.contains(students_list.get(student_id).get_pending_quizes_list().get(m))){
+                                    System.out.println("ID: "+k+" Question: "+students_list.get(student_id).get_pending_quizes_list().get(m).get_quiz_question());
+                                    choosing_id.put(k, students_list.get(student_id).get_pending_quizes_list().get(m).get_quiz_question());
+                                    k++;
+                                }
                             }
                             System.out.print("Enter ID of assessment: ");
                             int assessment_ID = backpack.nextInt();
@@ -426,6 +502,10 @@ class Main{
                                             students_list.get(student_id).get_submitted_assignments().add(students_list.get(student_id).get_pending_assignments_list().get(m));
                                             students_list.get(student_id).get_pending_assignments_list().remove(m);
                                             break;
+                                        }
+                                        else{
+                                            System.out.println("Please upload .zip file only");
+                                            continue;
                                         }
                                     }
                                 }
@@ -444,8 +524,64 @@ class Main{
                         System.out.println("--------------------------------------");
                     } 
                     else if(function_number==4){
+                        System.out.println("Graded submissions");
+                        for(int m=0; m<students_list.get(student_id).get_submitted_assignments().size(); m++){
+                            if(students_list.get(student_id).get_graded_assignments_list().containsKey(students_list.get(student_id).get_submitted_assignments().get(m))){
+                                System.out.println("Submission: "+students_list.get(student_id).get_submitted_assignments_list().get(students_list.get(student_id).get_submitted_assignments().get(m)));
+                                System.out.println("Marks scored: "+students_list.get(student_id).get_graded_assignments_list().get(students_list.get(student_id).get_submitted_assignments().get(m)));
+                                System.out.println("Graded by: "+students_list.get(student_id).get_instructors_grading_assignments().get(students_list.get(student_id).get_submitted_assignments().get(m)));
 
+                            }
+                        }
+                        for(int m=0; m<students_list.get(student_id).get_submitted_quizes().size(); m++){
+                            if(students_list.get(student_id).get_graded_quizes_list().containsKey(students_list.get(student_id).get_submitted_quizes().get(m))){
+                                System.out.println("Submission: "+students_list.get(student_id).get_submitted_quizes_list().get(students_list.get(student_id).get_submitted_quizes().get(m)));
+                                System.out.println("Marks scored: "+students_list.get(student_id).get_graded_quizes_list().get(students_list.get(student_id).get_submitted_quizes().get(m)));
+                                System.out.println("Graded by: "+students_list.get(student_id).get_instructors_grading_quizes().get(students_list.get(student_id).get_submitted_quizes().get(m)));
+
+                            }
+                        }
+                        System.out.println("\nUngraded submissions");
+                        for(int m=0; m<students_list.get(student_id).get_submitted_assignments().size(); m++){
+                            if(!students_list.get(student_id).get_graded_assignments_list().containsKey(students_list.get(student_id).get_submitted_assignments().get(m))){
+                                System.out.println("Submission: "+students_list.get(student_id).get_submitted_assignments_list().get(students_list.get(student_id).get_submitted_assignments().get(m)));
+                            }
+                        }
+                        for(int m=0; m<students_list.get(student_id).get_submitted_quizes().size(); m++){
+                            if(!students_list.get(student_id).get_graded_quizes_list().containsKey(students_list.get(student_id).get_submitted_quizes().get(m))){
+                                System.out.println("Submission: "+students_list.get(student_id).get_submitted_quizes_list().get(students_list.get(student_id).get_submitted_quizes().get(m)));
+                            }
+                        }
+                        System.out.println("--------------------------------------");       
                     } 
+                    else if(function_number==5){
+                        for(int m=0; m<list_of_comments.size(); m++){
+                            // if(list_of_comments.get(m).get_instructor() != null){
+                            //     System.out.println(list_of_comments.get(m).get_comment()+" - "+list_of_comments.get(m).get_instructor());
+                            //     System.out.println(list_of_comments.get(m).get_date_of_upload());
+                            // }
+                            // else if(list_of_comments.get(m).get_student() != null){
+                            //     System.out.println(list_of_comments.get(m).get_comment()+" - "+list_of_comments.get(m).get_student());
+                            //     System.out.println(list_of_comments.get(m).get_date_of_upload());
+                            // }
+                            list_of_comments.get(m).view_comment();
+                            System.out.println("");
+
+                        }
+                    }
+                    else if(function_number==6){
+                        System.out.print("Enter comment: ");
+                        String comment = backpack.nextLine();
+
+                        backpack_comments new_comment = new backpack_comments();
+                        Calendar calendar = Calendar.getInstance();
+                        new_comment.set_date_of_upload(calendar.getTime());
+                        new_comment.set_comment(comment);
+                        new_comment.set_student(students_list.get(student_id).get_student_name());
+
+                        list_of_comments.add(new_comment);
+
+                    }
                     else if(function_number==7){
                         System.out.println("Thanks for using Backpack "+students_list.get(student_id));
                         System.out.println("--------------------------------------");
@@ -543,11 +679,18 @@ class backpack_comments extends course_relations{
     private String comment;
     private Date date_of_upload;
 
-    public void add_comment(){
-        System.out.println(this.comment+" - "+this.get_instructor());
-        System.out.println()
-    }
+    public void view_comment(){
+        
+        if(this.get_instructor()!=null){
+            System.out.println(this.comment+" - "+this.get_instructor());
+            System.out.println(this.date_of_upload);
+        }
 
+        if(this.get_student()!=null){
+            System.out.println(this.comment+" - "+this.get_student());
+            System.out.println(this.date_of_upload);
+        }
+    }
     public String get_comment(){
         return comment;
     }
@@ -598,10 +741,12 @@ class students extends quiz{
     private ArrayList<assignment> submitted_assignments = new ArrayList<assignment>();
     private HashMap<assignment, String> submitted_assignments_list = new HashMap<assignment, String>();
     private HashMap<assignment, Integer> graded_assignments_list = new HashMap<assignment, Integer>();
+    private HashMap<assignment, String> instructors_grading_assignments = new HashMap<assignment, String>();
     private ArrayList<quiz> pending_quizes_list = new ArrayList<quiz>();
     private ArrayList<quiz> submitted_quizes = new ArrayList<quiz>();
     private HashMap<quiz, String> submitted_quizes_list = new HashMap<quiz, String>();
     private HashMap<quiz, Integer> graded_quizes_list = new HashMap<quiz, Integer>();
+    private HashMap<quiz, String> instructors_grading_quizes = new HashMap<quiz, String>();
 
     public String get_student_name(){
         return student_name;
@@ -633,6 +778,12 @@ class students extends quiz{
     public void set_graded_assignments_list(HashMap<assignment, Integer> graded_assignments_list){
         this.graded_assignments_list = graded_assignments_list;
     }
+    public HashMap<assignment, String> get_instructors_grading_assignments(){
+        return instructors_grading_assignments;
+    }
+    public void set_instructors_grading_assignments(HashMap<assignment, String> instructors_grading_assignments){
+        this.instructors_grading_assignments = instructors_grading_assignments;
+    }
     public ArrayList<quiz> get_pending_quizes_list(){
         return pending_quizes_list;
     }
@@ -656,5 +807,11 @@ class students extends quiz{
     }
     public void set_graded_quizes_list(HashMap<quiz, Integer> graded_quizes_list){
         this.graded_quizes_list = graded_quizes_list;
+    }
+    public HashMap<quiz, String> get_instructors_grading_quizes(){
+        return instructors_grading_quizes;
+    }
+    public void set_instructors_grading_quizes(HashMap<quiz, String> instructors_grading_quizes){
+        this.instructors_grading_quizes = instructors_grading_quizes;
     }
 }
