@@ -51,6 +51,7 @@ public class A3_2020390{
 
                 System.out.println("--------------------------------------------------");
             }
+
             else if(task==2){
                 System.out.println("All 15 types of matrices are as follows: ");
                 System.out.println("1. Rectangular Matrix \n2. Row Matrix \n3. Column Matrix \n4. Square Matrix "
@@ -66,15 +67,21 @@ public class A3_2020390{
                 new_matrix.matrix_of_matrix_type(index, matrices_list);
                 System.out.println("--------------------------------------------------");
             }
+
             else if(task==3){
                 System.out.print("Enter the index of the matrix you want from the array: ");
                 int index_1 = matrices.nextInt();
                 System.out.println("The matrix chosen is "+Arrays.deepToString(matrices_list.get(index_1).get_matrix()));
+
+                matrices_list.get(index_1).identify_matrix_type();
                 HashMap<Integer, String> types_of_matrix = new HashMap<Integer, String>();
+                System.out.println("The matrix-type labels of the chosen matrix are: ");
+
                 for(int m=0; m<matrices_list.get(index_1).get_types().size(); m++){
                     System.out.println(m+") "+matrices_list.get(index_1).get_types().get(m));
                     types_of_matrix.put(m, matrices_list.get(index_1).get_types().get(m));
                 }
+
                 System.out.print("Enter the index of the matrix-type you want fixed: ");
                 int index_2 = matrices.nextInt();
 
@@ -86,9 +93,18 @@ public class A3_2020390{
                     System.out.print("Enter the new number which is to be updated at given location: ");
                     int new_no = matrices.nextInt();
                     
+                    if(row_no<=matrices_list.get(index_1).get_no_of_rows() && column_no<=matrices_list.get(index_1).get_no_of_columns()){
+                        create_matrices new_matrix = new create_matrices();
+                        new_matrix.change_elements(index_1, index_2, row_no, column_no, new_no, matrices_list);
+                        break;
+                    }
+                    else{
+                        System.out.println("The given location does not exist in the chosen matrix. Try again.");
+                    }
                 }
-
+                System.out.println("--------------------------------------------------");
             }
+
             else if(task==4){
                 if(matrices_list!=null){
                     System.out.print("Enter the index of the matrix you want from the array: ");
@@ -127,141 +143,24 @@ public class A3_2020390{
                                 
                             System.out.print("Enter the index of the operation you want to run: ");
                             int operation = matrices.nextInt();
+                            operations new_matrix = new operations();
 
                             if(operation==1){
-                                if(matrices_list.get(index_1).get_no_of_rows()==matrices_list.get(index_2).get_no_of_rows() && matrices_list.get(index_1).get_no_of_columns()==matrices_list.get(index_2).get_no_of_columns()){
-                                    
-                                    ArrayList<ArrayList<Integer>> ADD = new ArrayList<ArrayList<Integer>>();
-                                    for (int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
-                                        ArrayList<Integer> ADD_new = new ArrayList<Integer>();
-                                        for (int n=0; n<matrices_list.get(index_1).get_no_of_columns(); n++){
-                                            ADD_new.add(A[m][n] + B[m][n]);
-                                            if(ADD_new.size()==matrices_list.get(index_1).get_no_of_columns()){
-                                                ADD.add(ADD_new);
-                                            }
-                                        }
-                                    }
-                                    System.out.println("The sum of the two chosen matrices is: "+ADD);
-                                    System.out.println("-------------------");
-                                }
-                                else{
-                                    System.out.println("These operations cannot be performed on the chosen matrices.");
-                                    System.out.println("-------------------");
-                                }                                   
+                                new_matrix.addition(index_1, A, index_2, B, matrices_list);
+                                System.out.println("-------------------");                                
                             }
 
                             else if(operation==2){
-                                if(matrices_list.get(index_1).get_no_of_rows()==matrices_list.get(index_2).get_no_of_rows() && matrices_list.get(index_1).get_no_of_columns()==matrices_list.get(index_2).get_no_of_columns()){
-                                    
-                                    ArrayList<ArrayList<Integer>> SUB = new ArrayList<ArrayList<Integer>>();
-                                    for (int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
-                                        ArrayList<Integer> SUB_new = new ArrayList<Integer>();
-                                        for (int n=0; n<matrices_list.get(index_1).get_no_of_columns(); n++){
-                                            SUB_new.add(A[m][n] - B[m][n]);
-                                            if(SUB_new.size()==matrices_list.get(index_1).get_no_of_columns()){
-                                                SUB.add(SUB_new);
-                                            }
-                                        }
-                                    }
-                                    System.out.println("The difference between the two chosen matrices is: "+SUB);
-                                    System.out.println("-------------------");
-                                }
-                                else{
-                                    System.out.println("This operation cannot be performed on the chosen matrices.");
-                                    System.out.println("-------------------");
-                                }
+                                new_matrix.subtraction(index_1, A, index_2, B, matrices_list);
+                                System.out.println("-------------------");
                             }
                             else if(operation==3){
-                                if(matrices_list.get(index_2).get_no_of_rows()==matrices_list.get(index_1).get_no_of_columns()){
-                                    if(matrices_list.get(index_1).get_types().contains("Null Matrix") || matrices_list.get(index_2).get_types().contains("Null Matrix")){
-                                        int[][] MUL = new int[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_columns()];
-                                        for (int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
-                                            for (int n=0; n<matrices_list.get(index_2).get_no_of_columns(); n++){
-                                                MUL[m][n]=0;
-                                            }
-                                        }
-                                        System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(MUL));
-                                        System.out.println("-------------------");
-                                        
-                                    }
-                                    else if(matrices_list.get(index_1).get_types().contains("Identity Matrix") || matrices_list.get(index_2).get_types().contains("Identity Matrix")){
-                                        if(!matrices_list.get(index_1).get_types().contains("Identity Matrix")){
-                                            System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(A));
-                                            System.out.println("-------------------");
-                                        }
-                                        else if(!matrices_list.get(index_2).get_types().contains("Identity Matrix")){
-                                            System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(B));
-                                            System.out.println("-------------------");
-                                        }
-                                        else{
-                                            System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(A));
-                                            System.out.println("-------------------");
-                                        }
-                                    }
-                                    else{
-                                        int[][] MUL = new int[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_columns()];
-                                        for (int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
-                                            for (int n=0; n<matrices_list.get(index_2).get_no_of_columns(); n++){
-                                                for (int p=0; p<matrices_list.get(index_2).get_no_of_rows(); p++){
-                                                    MUL[m][n] = MUL[m][n] + (A[m][p]*B[p][n]);
-                                                }                                              
-                                            }
-                                        } 
-                                        System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(MUL)
-                                        );
-                                        System.out.println("-------------------");
-                                    }
-                                }
-                                else{
-                                    System.out.println("This operation cannot be performed on the chosen matrices.");
-                                    System.out.println("-------------------");
-                                }
-
+                                new_matrix.multiplication(index_1, A, index_2, B, matrices_list);
+                                System.out.println("-------------------");
                             }
                             else if(operation==4){
-                                if(matrices_list.get(index_2).get_no_of_columns()==matrices_list.get(index_1).get_no_of_columns() && matrices_list.get(index_2).get_no_of_rows()==matrices_list.get(index_2).get_no_of_columns()){
-                                    if(matrices_list.get(index_2).determinant_value(matrices_list.get(index_2).get_matrix(), matrices_list.get(index_2).get_no_of_rows(), matrices_list.get(index_2).get_no_of_columns()) != 0){
-                                        float[][] B_inverse = matrices_list.get(index_2).find_inverse();
-
-                                        if(matrices_list.get(index_1).get_types().contains("Null Matrix")){
-                                            int[][] DIV = new int[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_rows()];
-                                            for (int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
-                                                for (int n=0; n<matrices_list.get(index_2).get_no_of_rows(); n++){
-                                                    DIV[m][n]=0;
-                                                }
-                                            }
-                                            System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(DIV));
-                                            System.out.println("-------------------");                                        
-                                        }
-
-                                        else if(matrices_list.get(index_1).get_types().contains("Identity Matrix")){
-                                            System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(B_inverse));
-                                            System.out.println("-------------------");
-                                
-                                        }
-                                        else{
-                                            float[][] DIV = new float[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_rows()];
-                                            for (int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
-                                                for (int n=0; n<matrices_list.get(index_2).get_no_of_rows(); n++){
-                                                    for (int p=0; p<matrices_list.get(index_2).get_no_of_columns(); p++){
-                                                        DIV[m][n] = (DIV[m][n] + (A[m][p]*B_inverse[p][n]));
-                                                    }                                              
-                                                }
-                                            } 
-                                            System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(DIV));
-                                            System.out.println("-------------------");
-                                        }
-                                    }
-                                    else{
-                                        System.out.println("This operation cannot be performed as the second matrix is a singular matrix.");
-                                        System.out.println("-------------------");
-                                    }
-                                }
-                                else{
-                                    System.out.println("This operation cannot be performed on the chosen matrices.");
-                                    System.out.println("-------------------");
-                                }
-
+                                new_matrix.division(index_1, A, index_2, B, matrices_list);
+                                System.out.println("-------------------");
                             }
                             else if(operation==5){
                                 System.out.println("Thanks for implementing the operations of matrices.");
@@ -443,7 +342,7 @@ public class A3_2020390{
                                             MUL[m][n] = (matrices_list.get(index_2).get_matrix()[0][0] * matrices_list.get(index_1).get_matrix()[m][n]);
                                         }
                                     }
-                                    System.out.println("The new matrix after multiplication with singleton matrix as a matris is: "+Arrays.deepToString(MUL));
+                                    System.out.println("The new matrix after multiplication with singleton matrix as a scalar is: "+Arrays.deepToString(MUL));
                                     break;
                                 }
                                 else{
@@ -470,17 +369,8 @@ public class A3_2020390{
                         System.out.println("The transpose of the chosen matrix is "+Arrays.deepToString(A_transpose));
                         
                         if(matrices_list.get(index).get_no_of_rows()==matrices_list.get(index).get_no_of_columns()){
-                            ArrayList<ArrayList<Integer>> ADD = new ArrayList<ArrayList<Integer>>();
-                            for (int m=0; m<matrices_list.get(index).get_no_of_rows(); m++){
-                                ArrayList<Integer> ADD_new = new ArrayList<Integer>();
-                                for (int n=0; n<matrices_list.get(index).get_no_of_columns(); n++){
-                                    ADD_new.add(A[m][n] + A_transpose[m][n]);
-                                    if(ADD_new.size()==matrices_list.get(index).get_no_of_columns()){
-                                        ADD.add(ADD_new);
-                                    }
-                                }
-                            }
-                            System.out.println("The sum of the A and transpose of A is: "+ADD);
+                            operations new_matrix = new operations();
+                            new_matrix.addition(index, A, index, A_transpose, matrices_list);
                         }
                     }
                     else{
@@ -513,8 +403,7 @@ public class A3_2020390{
                                                 for (int m=0; m<matrices_list.get(index_1).get_no_of_columns(); m++){
                                                     DIV[m][0]=0;
                                                 }
-                                                System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(DIV));
-                                                System.out.println("-------------------");                                        
+                                                System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(DIV));                                       
                                             }
                                             else{
                                                 float[][] DIV = new float[matrices_list.get(index_1).get_no_of_columns()][1];
@@ -524,17 +413,14 @@ public class A3_2020390{
                                                     }                                              
                                                 } 
                                                 System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(DIV));
-                                                System.out.println("-------------------");
                                             }
                                         }
                                         else{
                                             System.out.println("This operation cannot be performed as the first matrix is a singular matrix.");
-                                            System.out.println("-------------------");
                                         }
                                     }
                                     else{
                                         System.out.println("This operation cannot be performed on the chosen matrices.");
-                                        System.out.println("-------------------");
                                     }
                                     break;
                                 }
@@ -696,6 +582,20 @@ public class A3_2020390{
     }
 }
 
+interface matric_basics{
+    int no_of_rows=1;
+    int get_no_of_rows();
+    void set_no_of_rows(int no_of_rows);
+
+    int no_of_columns=1;
+    int get_no_of_columns();
+    void set_no_of_columns(int no_of_columns);
+
+    int[][] matrix = new int[no_of_columns][no_of_rows];
+    int[][] get_matrix();
+    void set_matrix(int[][] matrix);
+    
+}
 
 class determinants{
     private int no_of_rows;
@@ -1002,9 +902,130 @@ class matrix_types extends inverse{
     }
 }
 
+class operations{
+    void addition(int index_1, int[][] A, int index_2, int[][] B, ArrayList<matrix_types> matrices_list){
+        if(matrices_list.get(index_1).get_no_of_rows()==matrices_list.get(index_2).get_no_of_rows() && matrices_list.get(index_1).get_no_of_columns()==matrices_list.get(index_2).get_no_of_columns()){
+                                    
+            ArrayList<ArrayList<Integer>> ADD = new ArrayList<ArrayList<Integer>>();
+            for(int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
+                ArrayList<Integer> ADD_new = new ArrayList<Integer>();
+                for(int n=0; n<matrices_list.get(index_1).get_no_of_columns(); n++){
+                    ADD_new.add(A[m][n] + B[m][n]);
+                    if(ADD_new.size()==matrices_list.get(index_1).get_no_of_columns()){
+                        ADD.add(ADD_new);
+                    }
+                }
+            }
+            System.out.println("The sum of the two chosen matrices is: "+ADD);
+        }
+        else{
+            System.out.println("These operations cannot be performed on the chosen matrices.");
+        }
+    }
+    void subtraction(int index_1, int[][] A, int index_2, int[][] B, ArrayList<matrix_types> matrices_list){
+        if(matrices_list.get(index_1).get_no_of_rows()==matrices_list.get(index_2).get_no_of_rows() && matrices_list.get(index_1).get_no_of_columns()==matrices_list.get(index_2).get_no_of_columns()){
+                                    
+            ArrayList<ArrayList<Integer>> SUB = new ArrayList<ArrayList<Integer>>();
+            for(int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
+                ArrayList<Integer> SUB_new = new ArrayList<Integer>();
+                for(int n=0; n<matrices_list.get(index_1).get_no_of_columns(); n++){
+                    SUB_new.add(A[m][n] - B[m][n]);
+                    if(SUB_new.size()==matrices_list.get(index_1).get_no_of_columns()){
+                        SUB.add(SUB_new);
+                    }
+                }
+            }
+            System.out.println("The difference between the two chosen matrices is: "+SUB);
+        }
+        else{
+            System.out.println("This operation cannot be performed on the chosen matrices.");
+        }
+    }
+    void multiplication(int index_1, int[][] A, int index_2, int[][] B, ArrayList<matrix_types> matrices_list){
+        if(matrices_list.get(index_2).get_no_of_rows()==matrices_list.get(index_1).get_no_of_columns()){
+            if(matrices_list.get(index_1).get_types().contains("Null Matrix") || matrices_list.get(index_2).get_types().contains("Null Matrix")){
+                int[][] MUL = new int[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_columns()];
+                for(int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
+                    for(int n=0; n<matrices_list.get(index_2).get_no_of_columns(); n++){
+                        MUL[m][n]=0;
+                    }
+                }
+                System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(MUL));
+                
+            }
+            else if(matrices_list.get(index_1).get_types().contains("Identity Matrix") || matrices_list.get(index_2).get_types().contains("Identity Matrix")){
+                if(!matrices_list.get(index_1).get_types().contains("Identity Matrix")){
+                    System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(A));
+                }
+                else if(!matrices_list.get(index_2).get_types().contains("Identity Matrix")){
+                    System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(B));
+                }
+                else{
+                    System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(A));
+                }
+            }
+            else{
+                int[][] MUL = new int[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_columns()];
+                for(int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
+                    for(int n=0; n<matrices_list.get(index_2).get_no_of_columns(); n++){
+                        for(int p=0; p<matrices_list.get(index_2).get_no_of_rows(); p++){
+                            MUL[m][n] = MUL[m][n] + (A[m][p]*B[p][n]);
+                        }                                              
+                    }
+                } 
+                System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(MUL)
+                );
+            }
+        }
+        else{
+            System.out.println("This operation cannot be performed on the chosen matrices.");
+        }
+
+    }
+    void division(int index_1, int[][] A, int index_2, int[][] B, ArrayList<matrix_types> matrices_list){
+        if(matrices_list.get(index_2).get_no_of_columns()==matrices_list.get(index_1).get_no_of_columns() && matrices_list.get(index_2).get_no_of_rows()==matrices_list.get(index_2).get_no_of_columns()){
+            if(matrices_list.get(index_2).determinant_value(matrices_list.get(index_2).get_matrix(), matrices_list.get(index_2).get_no_of_rows(), matrices_list.get(index_2).get_no_of_columns()) != 0){
+                float[][] B_inverse = matrices_list.get(index_2).find_inverse();
+
+                if(matrices_list.get(index_1).get_types().contains("Null Matrix")){
+                    int[][] DIV = new int[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_rows()];
+                    for(int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
+                        for(int n=0; n<matrices_list.get(index_2).get_no_of_rows(); n++){
+                            DIV[m][n]=0;
+                        }
+                    }
+                    System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(DIV));                                        
+                }
+
+                else if(matrices_list.get(index_1).get_types().contains("Identity Matrix")){
+                    System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(B_inverse));
+        
+                }
+                else{
+                    float[][] DIV = new float[matrices_list.get(index_1).get_no_of_rows()][matrices_list.get(index_2).get_no_of_rows()];
+                    for(int m=0; m<matrices_list.get(index_1).get_no_of_rows(); m++){
+                        for(int n=0; n<matrices_list.get(index_2).get_no_of_rows(); n++){
+                            for(int p=0; p<matrices_list.get(index_2).get_no_of_columns(); p++){
+                                DIV[m][n] = (DIV[m][n] + (A[m][p]*B_inverse[p][n]));
+                            }                                              
+                        }
+                    } 
+                    System.out.println("The product of the two chosen matrices is: "+Arrays.deepToString(DIV));
+                }
+            }
+            else{
+                System.out.println("This operation cannot be performed as the second matrix is a singular matrix.");
+            }
+        }
+        else{
+            System.out.println("This operation cannot be performed on the chosen matrices.");
+        }
+    }
+}
+
 class create_matrices{
 
-    public void matrix_of_matrix_type(int index, ArrayList<matrix_types> matrices_list){
+    void matrix_of_matrix_type(int index, ArrayList<matrix_types> matrices_list){
         if(index==1){
             int matrix[][]={{1, 2}, {4, 5}, {7, 8}};
             System.out.println("Rectangular matrix is "+Arrays.deepToString(matrix));
@@ -1144,11 +1165,42 @@ class create_matrices{
             System.out.println("Wrong index");
         }
     }
-    public void change_elements(int index_1, int index_2, int row_no, int column_no, int new_no, ArrayList<matrix_types> matrices_list){
-        
-        if(matrices_list.get(index_1).get_types().get(index_2).equals("Rectangular Matrix")){
+    void change_elements(int index_1, int index_2, int row_no, int column_no, int new_no, ArrayList<matrix_types> matrices_list){
 
+        matrices_list.get(index_1).identify_matrix_type();
+        if(matrices_list.get(index_1).get_types().get(index_2).equals("Square Matrix") || matrices_list.get(index_1).get_types().get(index_2).equals("Rectangular Matrix") || matrices_list.get(index_1).get_types().get(index_2).equals("Row Matrix") || matrices_list.get(index_1).get_types().get(index_2).equals("Column Matrix")){
+            matrices_list.get(index_1).get_matrix()[row_no-1][column_no-1]=new_no;
+            System.out.println("The new matrix after updation is "+Arrays.deepToString(matrices_list.get(index_1).get_matrix()));
+        }
+        else if(matrices_list.get(index_1).get_types().get(index_2).equals("Symmetric Matrix") || matrices_list.get(index_1).get_types().get(index_2).equals("Diagonal Matrix")){
+            if(row_no==column_no){
+                matrices_list.get(index_1).get_matrix()[row_no-1][column_no-1]=new_no;
+                System.out.println("The new matrix after updation is "+Arrays.deepToString(matrices_list.get(index_1).get_matrix()));
+            }
+            else{
+                System.out.println("The requested location of the matrix cannot be updated with the given new number.");
+            }
+        }
+        else if(matrices_list.get(index_1).get_types().get(index_2).equals("Upper-Triangular Matrix")){
+            if(column_no>=row_no){
+                matrices_list.get(index_1).get_matrix()[row_no-1][column_no-1]=new_no;
+                System.out.println("The new matrix after updation is "+Arrays.deepToString(matrices_list.get(index_1).get_matrix()));
+            }
+            else{
+                System.out.println("The requested location of the matrix cannot be updated with the given new number.");
+            }
+        }
+        else if(matrices_list.get(index_1).get_types().get(index_2).equals("Lower-Triangular Matrix")){
+            if(column_no<=row_no){
+                matrices_list.get(index_1).get_matrix()[row_no-1][column_no-1]=new_no;
+                System.out.println("The new matrix after updation is "+Arrays.deepToString(matrices_list.get(index_1).get_matrix()));
+            }
+            else{
+                System.out.println("The requested location of the matrix cannot be updated with the given new number.");
+            }
+        }
+        else{
+            System.out.println("The fixed matrix-type of the chosen matrix does not allow matrix-updation.");
         }
     }
-
 }
