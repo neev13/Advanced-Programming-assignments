@@ -78,7 +78,7 @@ public class A3_2020390{
                 System.out.println("The matrix-type labels of the chosen matrix are: ");
 
                 for(int m=0; m<matrices_list.get(index_1).get_types().size(); m++){
-                    System.out.println(m+") "+matrices_list.get(index_1).get_types().get(m));
+                    System.out.println(m+". "+matrices_list.get(index_1).get_types().get(m));
                     types_of_matrix.put(m, matrices_list.get(index_1).get_types().get(m));
                 }
 
