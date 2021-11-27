@@ -17,15 +17,17 @@ public class question_2{
         while(1!=13){
 
             System.out.print("Enter the index of the task you want to run: ");
-            int task = images.nextInt();
+            int t = images.nextInt();
+            Generic <Integer> task = new Generic<Integer>(t);
             images.nextLine();
             System.out.println("---------------");
             image_functions new_function = new image_functions();
 
-            if(task==1){
+            if(task.get_Generic()==1){
 
                 System.out.print("Image name: ");
-                String image_name = images.nextLine();
+                String name = images.nextLine();
+                Generic <String> image_name = new Generic<String>(name);
                 System.out.println("---------");
 
                 String image_type=null;
@@ -37,7 +39,7 @@ public class question_2{
                         break;
                     }
                     else{
-                        System.out.println("Invalid image type. PLease choose either color or grayscale.");
+                        System.out.println("Invalid image type. Please choose either color or grayscale.");
                     }
                 }
                 System.out.print("Enter the number of rows in this image(matrix): ");
@@ -65,22 +67,23 @@ public class question_2{
                 
                 image new_image = new image();
                 new_image.set_matrix(image_new);
-                new_image.set_image_name(image_name);
+                new_image.set_image_name(image_name.get_Generic());
                 new_image.set_image_type(image_type);
                 new_image.set_no_of_rows(m);
                 new_image.set_no_of_columns(n);
                 images_list.add(new_image);
                 System.out.println("--------------------------------------");
             }
-            else if(task==2){
+            else if(task.get_Generic()==2){
 
                 System.out.print("Enter the name of the image you want: ");
-                String image_name = images.nextLine();
+                String name = images.nextLine();
+                Generic <String> image_name = new Generic<String>(name);
                 System.out.println("---------");
 
                 int temporary=0;
                 for(int m=0; m<images_list.size(); m++){
-                    if(images_list.get(m).get_image_name().equals(image_name)){
+                    if(images_list.get(m).get_image_name().equals(image_name.get_Generic())){
                         System.out.print("Enter the row number of the element in the matrix to be updated: ");
                         int row_no = images.nextInt();
                         System.out.println("---------");
@@ -102,23 +105,25 @@ public class question_2{
                 }
                 System.out.println("--------------------------------------");
             }
-            else if(task==3){
+            else if(task.get_Generic()==3){
                 System.out.print("Enter the name of the image you want: ");
-                String image_name = images.nextLine();
+                String name = images.nextLine();
+                Generic <String> image_name = new Generic<String>(name);
                 System.out.println("---------");
 
-                new_function.display_image(images_list, image_name);
+                new_function.display_image(images_list, image_name.get_Generic());
                 System.out.println("--------------------------------------");
             }
-            else if(task==4){
+            else if(task.get_Generic()==4){
                 System.out.print("Enter the name of the image you want: ");
-                String image_name = images.nextLine();
+                String name = images.nextLine();
+                Generic <String> image_name = new Generic<String>(name);
                 System.out.println("---------");
 
-                new_function.computation_of_negatives(images_list, image_name);
+                new_function.computation_of_negatives(images_list, image_name.get_Generic());
                 System.out.println("--------------------------------------");
             }
-            else if(task==5){
+            else if(task.get_Generic()==5){
                 System.out.println("Thanks for using Image World.");
                 System.out.println("--------------------------------------");
                 break;
@@ -126,6 +131,17 @@ public class question_2{
         }
     }
 }
+
+class Generic<variable>{
+    variable obj;
+    Generic(variable obj){
+        this.obj = obj;  
+    } 
+    public variable get_Generic(){
+        return this.obj; 
+    }
+}
+
 class image{
     private int no_of_rows;
     private int no_of_columns;
